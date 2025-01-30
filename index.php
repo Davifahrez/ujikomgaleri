@@ -8,7 +8,6 @@
 <body>
     <?php
     require 'config/conn.php';
-    
     ?>
 </body>
 </html>
