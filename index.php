@@ -6,6 +6,8 @@
     <title>Galeri</title>
 </head>
 <body>
-    
+    <?php
+    require 'config/conn.php';
+    ?>
 </body>
 </html>
