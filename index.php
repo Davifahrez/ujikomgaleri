@@ -7,7 +7,7 @@
 </head>
 <body>
     <?php
-    require 'config/conn.php';
+        require 'config/conn.php';
     ?>
 </body>
 </html>
