@@ -24,9 +24,39 @@
                     <tr>
                         <td><?php echo $row['album_name']; ?></td>
                         <td>
-                            <button type="button" class="btn btn-primary" data-bs-toggle="Modal" data-bs-target="#modalAlbums">Edit Data</button>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEdit">Edit Data</button>                            
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalView">View Data</button>
                         </td>
                     </tr>
+                    
+                <div class="modal fade" id="modalView" tabindex="-1" role="dialog" aria-labelledby="modalViewLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h2 class="modal-title" id="modalViewLabel">View Data</h2>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label for="Album" class="form-label">Album Name</label>
+                                    <p class="form-control-plaintext"><?php echo $row['album_name']; ?></p>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="Album" class="form-label">Album Description</label>
+                                    <p class="form-control-plaintext"><?php echo $row['album_desc']; ?></p>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="Album" class="form-label">User</label>
+                                    <p class="form-control-plaintext"><?php echo $row['user_name']; ?></p>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
         <?php
                 }
             } else {
