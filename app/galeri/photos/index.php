@@ -7,11 +7,6 @@
         <thead>
             <tr>
                 <th scope="col">Photos</th>
-                <th scope="col">Title</th>
-                <th scope="col">Description</th>
-                <th scope="col">Album</th>
-                <th scope="col">User</th>
-                <th scope="col">Created At</th>
                 <th scope="col">Options</th>
             </tr>
         </thead>
@@ -26,19 +21,17 @@
             while ($row = mysqli_fetch_assoc($result)) {
             ?>
                 <tr>
-                    <td><?php echo $row['photo_file']; ?></td>
-                    <td><?php echo $row['photo_title']; ?></td>
-                    <td><?php echo $row['photo_desc']; ?></td>
-                    <td><?php echo $row['album_name']; ?></td>
-                    <td><?php echo $row['user_name']; ?></td>
-                    <td><?php echo $row['created_at']; ?></td>
+                <td>
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#viewModal<?php echo $row['id']; ?>">
+                        <img style="max-width: 300px; height: auto;" class="img-fluid" src="galeri/<?php echo $row['photo_file']; ?>" alt="Photo">
+                    </a>
+                </td>
                     <td>
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal<?php echo $row['id']; ?>">Edit</button>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal<?php echo $row['id']; ?>">Edit Data</button>
                         <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal<?php echo $row['id']; ?>">Delete</button>
                     </td>
                 </tr>
 
-                <!-- Edit Modal -->
                 <div class="modal fade" id="editModal<?php echo $row['id']; ?>" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -48,9 +41,12 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
+                                    <div class="d-flex justify-content-center">
+                                        <img style="max-width: fit; height: auto;" class="img-fluid" src="galeri/<?php echo $row['photo_file']; ?>" alt="Photo">
+                                    </div>
                                     <div class="mb-3">
                                         <label for="photoFile<?php echo $row['id']; ?>" class="form-label">Photo File</label>
-                                        <input type="text" class="form-control" id="photoFile<?php echo $row['id']; ?>" name="photoFile" value="<?php echo htmlspecialchars($row['photo_file']); ?>" required>
+                                        <input type="file" class="form-control" id="photoFile<?php echo $row['id']; ?>" name="photoFile" value="<?php echo htmlspecialchars($row['photo_file']); ?>" required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="photoTitle<?php echo $row['id']; ?>" class="form-label">Title</label>
@@ -69,14 +65,48 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                    <button type="submit" class="btn btn-primary">Edit</button>
                                 </div>
                             </form>
                         </div>
                     </div>
                 </div>
+                
+                <div class="modal fade" id="viewModal<?php echo $row['id']; ?>" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">View Photo</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="d-flex justify-content-center mb-3">
+                                    <img style="max-width: 100%; height: auto;" class="img-fluid" src="galeri/<?php echo $row['photo_file']; ?>" alt="Photo">
+                                </div>
 
-                <!-- Delete Modal -->
+                                <div class="mb-3">
+                                    <label for="photoTitle<?php echo $row['id']; ?>" class="form-label" style="font-weight: bold;">Title</label>
+                                    <p id="photoTitle<?php echo $row['id']; ?>" class="form-control-plaintext"><?php echo htmlspecialchars($row['photo_title']); ?></p>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="photoDesc<?php echo $row['id']; ?>" class="form-label" style="font-weight: bold;">Description</label>
+                                    <p id="photoDesc<?php echo $row['id']; ?>" class="form-control-plaintext"><?php echo htmlspecialchars($row['photo_desc']); ?></p>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="albumId<?php echo $row['id']; ?>" class="form-label" style="font-weight: bold;">Album</label>
+                                    <p id="albumId<?php echo $row['id']; ?>" class="form-control-plaintext"><?php echo $row['album_name']; ?></p>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
                 <div class="modal fade" id="deleteModal<?php echo $row['id']; ?>" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -102,7 +132,7 @@
     <div class="modal fade" id="tambahModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form method="POST" action="app/galeri/read/tambah.php">
+                <form method="POST" action="app/galeri/photos/tambah.php" enctype="multipart/form-data">
                     <div class="modal-header">
                         <h5 class="modal-title">Add Photo</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -110,22 +140,17 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="photoFile" class="form-label">Photo File</label>
-                            <input type="text" class="form-control" id="photoFile" name="photoFile" required>
+                            <input type="file" class="form-control" id="photoFile" name="photo_file" required>
                         </div>
                         <div class="mb-3">
-                            <label for="photoTitle" class="form-label">Title</label>
-                            <input type="text" class="form-control" id="photoTitle" name="photoTitle" required>
+                            <label for="photo_title" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="photoTitle" name="photo_title" required>
                         </div>
                         <div class="mb-3">
-                            <label for="photoDesc" class="form-label">Description</label>
-                            <textarea class="form-control" id="photoDesc" name="photoDesc" required></textarea>
+                            <label for="photo_desc" class="form-label">Description</label>
+                            <textarea class="form-control" id="photoDesc" name="photo_desc" required></textarea>
                         </div>
-                        <div class="mb-3">
-                            <label for="albumId" class="form-label">Album</label>
-                            <select class="form-select" id="albumId" name="albumId" required>
-                            </select>
-                            <a href="?page=albums" class="btn btn-primary mt-3">Add Album</a>
-                        </div>
+                        
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

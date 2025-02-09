@@ -5,11 +5,7 @@
     </div>
     <table class="table mt-3">
         <tr>
-            <th>Album Id</th>
             <th>Album Name</th>
-            <th>Album Description</th>
-            <th>Users</th>
-            <th>Created At</th>
             <th>Options</th>
         </tr>
 
@@ -22,15 +18,14 @@
             $result = $conn->query($query);
             
             if ($result && $result->num_rows > 0) {
+                $no = 1;
                 while ($row = $result->fetch_assoc()) {
         ?>
                     <tr>
-                        <td><?php echo $row['id']; ?></td>
                         <td><?php echo $row['album_name']; ?></td>
-                        <td><?php echo $row['album_desc']; ?></td>
-                        <td><?php echo $row['user_name']; ?></td>
-                        <td><?php echo $row['created_at']; ?></td>
-                        <td></td>
+                        <td>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="Modal" data-bs-target="#modalAlbums">Edit Data</button>
+                        </td>
                     </tr>
         <?php
                 }
