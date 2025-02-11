@@ -52,11 +52,11 @@
                             <table class="table m-0">
                                 <tr>
                                     <!-- Kolom Foto (60% lebar) -->
-                                    <td class="w-60 p-0 border-0 align-top">
-                                        <img class="img-fluid object-fit-cover" src="galeri/<?php echo $row['photo_file']; ?>" alt="Photo">
+                                    <td class="w-6 border-0 align-top">
+                                        <img class="img-fluid" src="galeri/<?php echo $row['photo_file']; ?>" alt="Photo">
                                     </td>
                                     <!-- Kolom Informasi Foto (40% lebar) -->
-                                    <td class="w-40 p-3 border-0">
+                                    <td class="w-40 border-0">
                                         <!-- Informasi User -->
                                         <div class="d-flex align-items-center mb-3">
                                             <!-- Contoh avatar (bisa diganti dengan foto user) -->
@@ -69,16 +69,13 @@
                                         <!-- Detail Foto -->
                                         <table class="table table-borderless">
                                             <tr>
-                                                <td class="p-1"><strong>Title</strong></td>
-                                                <td class="p-1"><?php echo htmlspecialchars($row['photo_title']); ?></td>
+                                                <td class="p-1"><?php echo '<strong>' . htmlspecialchars($row['photo_title']). "</strong>"; ?></td>
                                             </tr>
                                             <tr>
-                                                <td class="p-1"><strong>Description</strong></td>
                                                 <td class="p-1"><?php echo htmlspecialchars($row['photo_desc']); ?></td>
                                             </tr>
                                             <tr>
-                                                <td class="p-1"><strong>Album</strong></td>
-                                                <td class="p-1"><?php echo $row['album_name']; ?></td>
+                                                <td class="p-1"><strong>Album</strong> <?php echo $row['album_name']; ?></td>
                                             </tr>
                                         </table>
 
@@ -152,6 +149,19 @@
                         <div class="mb-3">
                             <label for="photoDesc" class="form-label">Description</label>
                             <textarea class="form-control" id="photoDesc" name="photo_desc" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="albums_id" class="form-label">Albums</label>
+                            <select name="album_id" id="album_id" class="form-control">
+                                <?php
+                                $sql = "SELECT id, album_name FROM albums";
+                                $result = mysqli_query($conn, $sql);
+
+                                while ($row = mysqli_fetch_assoc($result)) {
+                                    echo '<option value="' . $row['id'] . '">' . $row['album_name'] . '</option>';
+                                }
+                                ?>
+                            </select>
                         </div>
                     </div>
                     <div class="modal-footer">
