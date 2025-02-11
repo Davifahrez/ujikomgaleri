@@ -1,156 +1,158 @@
-<div class="container">
-    <h1>Photos</h1>
-    <div class="d-flex justify-content-end mb-3">
-        <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#tambahModal">Tambah</button>
+<div class="container py-4">
+    <!-- Header: Judul Galeri dan Tombol Tambah Foto -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Photo Gallery</h1>
+        <!-- Tombol untuk membuka modal tambah foto -->
+        <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#tambahModal">
+            <i class="bi bi-plus-lg me-2"></i>Add Photo
+        </button>
     </div>
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">Photos</th>
-                <th scope="col">Options</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-            require 'config/conn.php';
-            $query = "SELECT photos.*, users.user_name, albums.album_name 
-                      FROM photos 
-                      JOIN users ON photos.users_id = users.id 
-                      JOIN albums ON photos.albums_id = albums.id";
-            $result = $conn->query($query);
-            while ($row = mysqli_fetch_assoc($result)) {
-            ?>
-                <tr>
-                <td>
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#viewModal<?php echo $row['id']; ?>">
-                        <img style="max-width: 300px; height: auto;" class="img-fluid" src="galeri/<?php echo $row['photo_file']; ?>" alt="Photo">
+
+    <!-- Grid untuk Menampilkan Foto-foto -->
+    <div class="row g-2">
+        <?php
+        // Menghubungkan ke database
+        require 'config/conn.php';
+
+        // Query untuk mengambil data foto beserta nama user dan nama album
+        $query = "SELECT photos.*, users.user_name, albums.album_name 
+                  FROM photos 
+                  JOIN users ON photos.users_id = users.id 
+                  JOIN albums ON photos.albums_id = albums.id";
+        $result = $conn->query($query);
+
+        // Looping setiap data foto yang diambil dari database
+        while ($row = mysqli_fetch_assoc($result)) {
+        ?>
+            <!-- Card Foto -->
+            <div class="col-12 col-sm-6 col-md-4">
+                <div class="position-relative">
+                    <!-- Gambar foto yang ketika diklik akan membuka modal view -->
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#viewModal<?php echo $row['id']; ?>" class="d-block">
+                        <div class="ratio ratio-1x1">
+                            <img src="galeri/<?php echo $row['photo_file']; ?>" 
+                                 class="w-100 h-100 object-fit-cover" 
+                                 alt="<?php echo htmlspecialchars($row['photo_title']); ?>">
+                        </div>
                     </a>
-                </td>
-                    <td>
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal<?php echo $row['id']; ?>">Edit Data</button>
-                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal<?php echo $row['id']; ?>">Delete</button>
-                    </td>
-                </tr>
+                </div>
+            </div>
 
-                <div class="modal fade" id="editModal<?php echo $row['id']; ?>" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <form method="POST" action="edit_photo.php">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Edit Photo</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="d-flex justify-content-center">
-                                        <img style="max-width: fit; height: auto;" class="img-fluid" src="galeri/<?php echo $row['photo_file']; ?>" alt="Photo">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="photoFile<?php echo $row['id']; ?>" class="form-label">Photo File</label>
-                                        <input type="file" class="form-control" id="photoFile<?php echo $row['id']; ?>" name="photoFile" value="<?php echo htmlspecialchars($row['photo_file']); ?>" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="photoTitle<?php echo $row['id']; ?>" class="form-label">Title</label>
-                                        <input type="text" class="form-control" id="photoTitle<?php echo $row['id']; ?>" name="photoTitle" value="<?php echo htmlspecialchars($row['photo_title']); ?>" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="photoDesc<?php echo $row['id']; ?>" class="form-label">Description</label>
-                                        <textarea class="form-control" id="photoDesc<?php echo $row['id']; ?>" name="photoDesc" required><?php echo htmlspecialchars($row['photo_desc']); ?></textarea>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="albumId<?php echo $row['id']; ?>" class="form-label">Album</label>
-                                        <select name="albumId" class="form-select">
-                                            <option value="<?php echo $row['albums_id']; ?>"><?php echo $row['album_name']; ?></option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-primary">Edit</button>
-                                </div>
-                            </form>
+            <!-- Modal View Foto -->
+            <div class="modal fade" id="viewModal<?php echo $row['id']; ?>" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <!-- Header Modal -->
+                        <div class="modal-header">
+                            <h5 class="modal-title">View Photo</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
+                        <!-- Body Modal -->
+                        <div class="modal-body p-0">
+                            <table class="table m-0">
+                                <tr>
+                                    <!-- Kolom Foto (60% lebar) -->
+                                    <td class="w-60 p-0 border-0 align-top">
+                                        <img class="img-fluid object-fit-cover" src="galeri/<?php echo $row['photo_file']; ?>" alt="Photo">
+                                    </td>
+                                    <!-- Kolom Informasi Foto (40% lebar) -->
+                                    <td class="w-40 p-3 border-0">
+                                        <!-- Informasi User -->
+                                        <div class="d-flex align-items-center mb-3">
+                                            <!-- Contoh avatar (bisa diganti dengan foto user) -->
+                                            <div class="rounded-circle bg-secondary" style="width: 32px; height: 32px;"></div>
+                                            <div class="ms-2">
+                                                <strong><?php echo htmlspecialchars($row['user_name']); ?></strong>
+                                            </div>
+                                        </div>
+
+                                        <!-- Detail Foto -->
+                                        <table class="table table-borderless">
+                                            <tr>
+                                                <td class="p-1"><strong>Title</strong></td>
+                                                <td class="p-1"><?php echo htmlspecialchars($row['photo_title']); ?></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="p-1"><strong>Description</strong></td>
+                                                <td class="p-1"><?php echo htmlspecialchars($row['photo_desc']); ?></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="p-1"><strong>Album</strong></td>
+                                                <td class="p-1"><?php echo $row['album_name']; ?></td>
+                                            </tr>
+                                        </table>
+
+                                        <!-- Komentar pada Foto -->
+                                        <div id="comment-container" class="comment-container text-break mb-3">
+                                            <?php
+                                            // Query untuk mengambil komentar berdasarkan foto
+                                            $getcomment = "SELECT comments.comment, users.user_name, comments.reply
+                                                           FROM comments 
+                                                           JOIN users ON comments.users_id = users.id
+                                                           WHERE comments.photos_id = {$row['id']}";
+                                            $commentresult = $conn->query($getcomment);
+                                            
+                                            if ($commentresult) {
+                                                while ($commentrow = mysqli_fetch_assoc($commentresult)) {
+                                                    echo "<strong>" . htmlspecialchars($commentrow['user_name']) . "</strong>: " 
+                                                         . htmlspecialchars($commentrow['comment']);
+                                                    if (!empty($commentrow['reply'])) {
+                                                        echo "<div class='reply'>Reply: " . htmlspecialchars($commentrow['reply']) . "</div>";
+                                                    }
+                                                    echo "<br>";
+                                                }
+                                            } else {
+                                                echo "No comments.";
+                                            }
+                                            ?>
+                                        </div>
+
+                                        <!-- Form Tambah Komentar -->
+                                        <form method="POST" action="app/galeri/comment/commentprocess.php">
+                                            <!-- Menyisipkan id foto secara tersembunyi -->
+                                            <input type="hidden" name="photos_id" value="<?php echo $row['id']; ?>">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" name="comment" placeholder="Write a comment..." required>
+                                                <button type="submit" class="btn btn-primary">Send</button>
+                                            </div>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <!-- Footer Modal (bisa ditambahkan tombol edit atau delete jika diperlukan) -->
                     </div>
                 </div>
-                
-                <div class="modal fade" id="viewModal<?php echo $row['id']; ?>" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">View Photo</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="d-flex justify-content-center mb-3">
-                                    <img style="max-width: 100%; height: auto;" class="img-fluid" src="galeri/<?php echo $row['photo_file']; ?>" alt="Photo">
-                                </div>
+            </div>
+        <?php } // Akhir dari looping foto ?>
+    </div>
 
-                                <div class="mb-3">
-                                    <label for="photoTitle<?php echo $row['id']; ?>" class="form-label" style="font-weight: bold;">Title</label>
-                                    <p id="photoTitle<?php echo $row['id']; ?>" class="form-control-plaintext"><?php echo htmlspecialchars($row['photo_title']); ?></p>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="photoDesc<?php echo $row['id']; ?>" class="form-label" style="font-weight: bold;">Description</label>
-                                    <p id="photoDesc<?php echo $row['id']; ?>" class="form-control-plaintext"><?php echo htmlspecialchars($row['photo_desc']); ?></p>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="albumId<?php echo $row['id']; ?>" class="form-label" style="font-weight: bold;">Album</label>
-                                    <p id="albumId<?php echo $row['id']; ?>" class="form-control-plaintext"><?php echo $row['album_name']; ?></p>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="modal fade" id="deleteModal<?php echo $row['id']; ?>" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Delete Photo</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <p>Are you sure you want to delete "<?php echo $row['photo_title']; ?>"?</p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Confirm Delete</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            <?php } ?>
-        </tbody>
-    </table>
-
+    <!-- Modal Tambah Foto -->
     <div class="modal fade" id="tambahModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
+                <!-- Form untuk tambah foto -->
                 <form method="POST" action="app/galeri/photos/tambah.php" enctype="multipart/form-data">
                     <div class="modal-header">
                         <h5 class="modal-title">Add Photo</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
+                        <!-- Input File Foto -->
                         <div class="mb-3">
                             <label for="photoFile" class="form-label">Photo File</label>
                             <input type="file" class="form-control" id="photoFile" name="photo_file" required>
                         </div>
+                        <!-- Input Judul Foto -->
                         <div class="mb-3">
-                            <label for="photo_title" class="form-label">Title</label>
+                            <label for="photoTitle" class="form-label">Title</label>
                             <input type="text" class="form-control" id="photoTitle" name="photo_title" required>
                         </div>
+                        <!-- Input Deskripsi Foto -->
                         <div class="mb-3">
-                            <label for="photo_desc" class="form-label">Description</label>
+                            <label for="photoDesc" class="form-label">Description</label>
                             <textarea class="form-control" id="photoDesc" name="photo_desc" required></textarea>
                         </div>
-                        
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -161,3 +163,13 @@
         </div>
     </div>
 </div>
+
+<!-- Script: Otomatis membuka modal view jika terdapat parameter "photos_id" pada URL -->
+<?php if(isset($_GET['photos_id'])): ?>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var photoModal = new bootstrap.Modal(document.getElementById('viewModal<?php echo $_GET['photos_id']; ?>'));
+        photoModal.show();
+    });
+</script>
+<?php endif; ?>
